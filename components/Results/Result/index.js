@@ -22,6 +22,11 @@ const Result = (
   const { dispatch } = useContext(Context);
 
   useEffect(() => {
+    (async () => {
+      const result = await fetch(`/api/restaurant?id=${id}`);
+      const data = await result.json();
+      console.log(data);
+    })();
   }, [id]);
 
   const { title: category } = categories[0]

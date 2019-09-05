@@ -1,10 +1,8 @@
 import fetch from 'isomorphic-unfetch';
 import { api_options } from '../../utils';
 
-export default async ({ query: { categories } }, res) => {
-  const url = 'https://api.yelp.com/v3/businesses/search?'
-    + (categories ? `categories=${categories}&` : '')
-    + 'location=lasvegas&';
+export default async ({ query: { id } }, res) => {
+  const url = `https://api.yelp.com/v3/businesses/${id}?limit=20`;
   const result = await fetch(url, api_options);
   const body = await result.json()
 

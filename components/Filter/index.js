@@ -55,7 +55,7 @@ export default () => {
               <Checkbox
                 key={title}
                 active={active}
-                onClick={() => dispatch({ type: 'TOGGLE', category: title })}
+                onClick={() => dispatch({ type: 'TOGGLE_CATEGORY', category: title })}
               >
                 {title}
               </Checkbox>)

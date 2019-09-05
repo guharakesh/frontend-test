@@ -11,11 +11,13 @@ const Dropdown = ({ label, children }) => {
     <div className="container">
       <div className="header" onClick={toggle}>
         <label>{label}</label>
-        <FontAwesomeIcon
-          icon={open ? faAngleUp : faAngleDown}
-          color="#969696"
-          size="xs"
-        />
+        <div className="icon">
+          <FontAwesomeIcon
+            icon={open ? faAngleUp : faAngleDown}
+            color="#969696"
+            size="xs"
+          />
+        </div>
       </div>
       <div className="dropdown">
         {children}
@@ -26,6 +28,10 @@ const Dropdown = ({ label, children }) => {
           position: relative;
           top: 4px;
           transform:translateY(calc(50% - 13.5px));
+        }
+        .icon {
+          width: auto;
+          height: auto;
         }
         .container .header {
           width: 100%;

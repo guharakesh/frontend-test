@@ -1,5 +1,5 @@
 import Text from '../Text';
-import Rating from '../rating';
+import Rating from '../Rating';
 
 const Review = () => (
   <div className="container">

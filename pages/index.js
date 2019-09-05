@@ -5,7 +5,7 @@ import Nav from '../components/Nav';
 import Filter from '../components/Filter';
 import Results from '../components/Results';
 import Context from '../components/Context';
-import { initialState, reducer } from './utils';
+import { initialState, reducer } from '../utils';
 
 const Home = () => {
   const [state, dispatch] = useReducer(reducer, initialState);

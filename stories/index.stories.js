@@ -16,7 +16,7 @@ import FilterInput from '../components/Filter/FilterInput';
 import Radio from '../components/Filter/Radio';
 import Button from '../components/Filter/Button';
 import Dropdown from '../components/Filter/Dropdown';
-import Checkbox from '../components/checkbox';
+import Checkbox from '../components/Checkbox';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 

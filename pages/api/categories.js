@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-unfetch';
-import { api_options } from '../utils';
+import { api_options } from '../../utils';
 
 export default async (req, res) => {
   const result = await fetch(

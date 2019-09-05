@@ -17,7 +17,7 @@ export const reducer = (state = initialState, action) => {
         ...state,
         restaurants,
       };
-    case 'TOGGLE':
+    case 'TOGGLE_CATEGORY':
       return {
         ...state,
         categories: state.categories
