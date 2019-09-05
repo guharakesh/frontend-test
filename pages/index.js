@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import Meta from '../components/Meta';
 import Hero from '../components/Hero';
 import Nav from '../components/Nav';
@@ -9,6 +9,7 @@ import { initialState, reducer } from '../utils';
 
 const Home = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [offset, setOffset] = useState(0);
 
   const { categories } = state;
   const categoryString = categories
@@ -16,12 +17,15 @@ const Home = () => {
     .map(({ alias }) => alias)
     .join(',');
 
+  const load_more = async () => {
+    const result = await fetch(`/api/search?categories=${categoryString}&offset=${offset}`);
+    const { businesses } = await result.json();
+    setOffset(businesses ? offset + businesses.length : offset);
+    dispatch({ type: 'LOAD_RESTAURANTS', restaurants: businesses });
+  }
+
   useEffect(() => {
-    (async () => {
-      const result = await fetch(`/api/search?categories=${categoryString}`);
-      const { businesses } = await result.json();
-      dispatch({ type: 'LOAD_RESTAURANTS', restaurants: businesses });
-    })();
+    load_more();
   }, [categoryString]);
 
   const { restaurants } = state;
@@ -36,7 +40,7 @@ const Home = () => {
             'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         }}</Hero>
         <Nav><Filter /></Nav>
-        <Results restaurants={restaurants} />
+        <Results restaurants={restaurants} load_more={load_more} />
       </Context.Provider>
     </div>
   );

@@ -1,8 +1,8 @@
 import { DARK_BLUE } from '../../../constants';
 import Text from '../../Text';
 
-const Load = () => (
-  <div className="button">
+const Load = props => (
+  <div className="button" {...props}>
     <Text
       font="HelveticaNeue-Medium"
       size={14}

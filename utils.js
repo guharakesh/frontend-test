@@ -1,23 +1,47 @@
+const price_keys = ['$', '$$', '$$$', '$$$$'];
+const prices = price_keys.reduce((acc, value) => ({ ...acc, [value]: false }), {});
+
 export const initialState = {
   categories: [],
   restaurants: [],
   open_now: false,
+  prices,
 };
 
-export const reducer = (state = initialState, action) => {
-  const { type, category, categories, restaurants } = action || {};
+export const reducer = (state = initialState, { type, ...action }) => {
   switch (type) {
-    case 'LOAD_CATEGORIES':
+    case 'LOAD_CATEGORIES': {
+      const { categories } = action || {};
       return {
         ...state,
         categories: categories.map(element => ({ ...element, active: false }))
       };
-    case 'LOAD_RESTAURANTS':
+    }
+    case 'LOAD_RESTAURANTS': {
+      const { restaurants } = action || {};
+      const filtered = restaurants.filter(({ id }) => {
+        const already = state.restaurants.some(({ id: old }) => old === id);
+        return !already;
+      });
       return {
         ...state,
-        restaurants,
+        restaurants: [
+          ...state.restaurants,
+          ...filtered,
+        ],
       };
-    case 'TOGGLE_CATEGORY':
+    }
+    case 'UPDATE_RESTAURANT': {
+      const { restaurants } = state;
+      const { restaurant } = action || {};
+      return {
+        ...state,
+        restaurants: restaurants.map(value => 
+          ((value.id === restaurant.id) ? restaurant : value)),
+      };
+    }
+    case 'TOGGLE_CATEGORY': {
+      const { categories, category } = action || {};
       return {
         ...state,
         categories: state.categories
@@ -26,10 +50,32 @@ export const reducer = (state = initialState, action) => {
             return title === category
               ? { ...element, active: !active }
               : element;
-          }
-          ),
+          }),
       };
-    case 'TOGGLE_ALL_CATEGORIES':
+    }
+    case 'TOGGLE_PRICE': {
+      const { price } = action || {};
+      const { prices } = state;
+      const { [price]: oldPrice } = prices;
+      return {
+        ...state,
+        prices: {
+          ...prices,
+          [price]: !oldPrice,
+        }
+      };
+    }
+    case 'TOGGLE_ALL_PRICES': {
+      const { prices } = state;
+      return {
+        ...state,
+        prices: Object.keys(prices).reduce((acc, value) => ({
+          ...acc,
+          [value]: Object.values(prices).includes(false),
+        }), {}),
+      };
+    }
+    case 'TOGGLE_ALL_CATEGORIES': {
       return {
         ...state,
         categories: state.categories.map(element => ({
@@ -37,12 +83,26 @@ export const reducer = (state = initialState, action) => {
           active: !!state.categories.find(({ active }) => !active),
         })),
       };
-    case 'TOGGLE_OPEN':
-      return { ...state, open_now: !state.open_now };
-    default:
+    }
+    case 'TOGGLE_OPEN': {
+      const { open_now } = state;
+      return {
+        ...state,
+        open_now: !open_now,
+      }
+    }
+    default: {
       return state;
+    }
   }
 }
+
+export const is_open_selector = state => target_id => {
+  const { restaurants } = state;
+  const { hours } = restaurants.find(({ id }) => id === target_id);
+  const { is_open_now } = hours ? hours.find(({ hours_type }) => hours_type === 'REGULAR') : {};
+  return is_open_now;
+};
 
 export const api_options = {
   method: 'GET',

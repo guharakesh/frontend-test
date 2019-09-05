@@ -20,7 +20,7 @@ export default () => {
     })();
   }, []);
 
-  const { categories, open_now } = state;
+  const { categories, open_now, prices } = state;
 
   return (
     <Fragment>
@@ -36,11 +36,21 @@ export default () => {
         </FilterInput>
         <FilterInput>
           <Dropdown label="Price">
-            <Checkbox>All</Checkbox>
-            <Checkbox>$</Checkbox>
-            <Checkbox>$$</Checkbox>
-            <Checkbox>$$$</Checkbox>
-            <Checkbox>$$$$</Checkbox>
+            <Checkbox
+              onClick={() => dispatch({ type: 'TOGGLE_ALL_PRICES' })}
+              active={!Object.values(prices).includes(false)}
+            >
+              All
+            </Checkbox>
+            {Object.keys(prices).map(value => (
+              <Checkbox
+                key={value}
+                active={prices[value]}
+                onClick={() => dispatch({ type: 'TOGGLE_PRICE', price: value })}
+              >
+                {value}
+              </Checkbox>
+            ))}
           </Dropdown>
         </FilterInput>
         <FilterInput>

@@ -1,33 +1,44 @@
 import { useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import fetch from 'isomorphic-unfetch';
 import Title from './Title';
 import Text from '../../Text';
 import Dot from '../../Dot';
 import Rating from '../../Rating';
 import Context from '../../Context';
+import { is_open_selector } from '../../../utils';
 
 const Result = (
   {
     restaurant: {
       categories,
-      is_closed,
       name,
       price,
       image_url,
       rating,
       id,
+      hours,
     },
   }
 ) => {
-  const { dispatch } = useContext(Context);
+  const { state, dispatch } = useContext(Context);
 
   useEffect(() => {
-    (async () => {
+    const get_data = async () => {
       const result = await fetch(`/api/restaurant?id=${id}`);
       const data = await result.json();
-      console.log(data);
-    })();
+      const { error } = data;
+      if (error) {
+        setTimeout(get_data, 200);
+      } else {
+        dispatch({ type: 'UPDATE_RESTAURANT', id, restaurant: data });
+      }
+    }
+    get_data();
   }, [id]);
+
+  const { is_open_now } = hours ? hours.find(({ hours_type }) => hours_type === 'REGULAR') : {};
+  const check_is_open = is_open_selector(state);
 
   const { title: category } = categories[0]
   return (
@@ -52,25 +63,27 @@ const Result = (
           </Text>
         </div>
         <div className="open">
-          <Dot />
+          <Dot closed={!check_is_open(id)} />
           <Text
             size={12}
             color="#757575"
             font="HelveticaNeue"
           >
-            {is_closed ? 'CLOSED' : 'OPEN NOW'}
+            {check_is_open(id) ? 'OPEN NOW' : 'CLOSED'}
           </Text>
         </div>
       </div>
-      <div className="learn">
-        <Text
-          size={14}
-          color="white"
-          font="HelveticaNeue"
-        >
-          {'LEARN MORE'}
-        </Text>
-      </div>
+      <Link href={`/restaurant/${id}`}>
+        <div className="learn">
+          <Text
+            size={14}
+            color="white"
+            font="HelveticaNeue"
+          >
+            {'LEARN MORE'}
+          </Text>
+        </div>
+      </Link>
       <style jsx>{`
         .container {
           margin-right: 32px;
